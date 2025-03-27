@@ -1,0 +1,45 @@
+name: Monitor Org Actions Settings Changes
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' 
+  workflow_dispatch: 
+
+jobs:
+  check-audit-log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Query Audit Log for Actions Settings Updates
+        id: audit
+        run: |
+          # Get current UTC time and subtract 15 minutes for the window
+          CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          START_TIME=$(date -u -d "15 minutes ago" +"%Y-%m-%dT%H:%M:%SZ")
+          echo "Scraping from $START_TIME to $CURRENT_TIME"
+          # Fetch audit log events for the last 15 minutes
+          API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/orgs/${{ github.repository_owner }}/audit-log?phrase=action:org.update_actions_settings+created:>=$START_TIME")
+          echo "Result from API: $API_RESPONSE"
+          echo $API_RESPONSE > audit.json
+          echo "Response structure:"
+          jq 'type' audit.json
+          # Check if any events match
+          if jq -e '.[] | select(.action == "org.update_actions_settings")' audit.json > /dev/null; then
+          echo "FOUND=true" >> $GITHUB_OUTPUT
+          jq -r '.[] | select(.action == "org.update_actions_settings") | "Org Actions settings updated by " + .actor + " at " + ((.created_at / 1000 | strftime("%Y-%m-%dT%H:%M:%SZ")))' audit.json > message.txt
+          else
+          echo "FOUND=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify Slack
+        if: steps.audit.outputs.FOUND == 'true'
+        run: |
+          echo "Sending message to Slack"
+          MESSAGE=$(cat message.txt)
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$MESSAGE\"}" \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
