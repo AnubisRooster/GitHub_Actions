@@ -1,0 +1,33 @@
+name: Send Issue to Jira
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  send-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Environment Variables
+        run: |
+          echo "JIRA_WEBHOOK_URL is set to: ${{ secrets.JIRA_WEBHOOK_URL }}"
+          echo "JIRA_WEBHOOK_TOKEN is set to: ${{ secrets.JIRA_WEBHOOK_TOKEN }}"
+          if [ -z "${{ secrets.JIRA_WEBHOOK_URL }}" ]; then
+            echo "Error: JIRA_WEBHOOK_URL is empty or not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.JIRA_WEBHOOK_TOKEN }}" ]; then
+            echo "Error: JIRA_WEBHOOK_TOKEN is empty or not set"
+            exit 1
+          fi
+
+      - name: Send Webhook to Jira
+        env:
+          JIRA_WEBHOOK_URL: ${{ secrets.JIRA_WEBHOOK_URL }}
+          JIRA_WEBHOOK_TOKEN: ${{ secrets.JIRA_WEBHOOK_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-Automation-Webhook-Token: $JIRA_WEBHOOK_TOKEN" \
+            -d "{\"action\": \"opened\", \"issue\": {\"title\": \"${{ github.event.issue.title }}\", \"body\": \"${{ github.event.issue.body }}\", \"html_url\": \"${{ github.event.issue.html_url }}\", \"user\": {\"login\": \"${{ github.event.issue.user.login }}\"}}}" \
+            "$JIRA_WEBHOOK_URL"
