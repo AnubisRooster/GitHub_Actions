@@ -38,7 +38,7 @@ jobs:
       - name: Notify Slack
         if: steps.audit.outputs.FOUND == 'true'
         run: |
-          echo "Sending message to Slack"
+          echo "Sending message to Slack!"
           MESSAGE=$(cat message.txt)
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"text\":\"$MESSAGE\"}" \
