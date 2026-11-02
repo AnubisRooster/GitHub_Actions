@@ -1,7 +1,7 @@
-# Graph Report - GitHub_Actions  (2026-10-26)
+# Graph Report - GitHub_Actions  (2026-11-02)
 
 ## Corpus Check
-- Corpus is ~12,507 words - fits in a single context window. You may not need a graph.
+- Corpus is ~14,130 words - fits in a single context window. You may not need a graph.
 
 ## Summary
 - 44 nodes · 41 edges · 5 communities (4 shown, 1 thin omitted)
@@ -17,14 +17,14 @@
 ## God Nodes (most connected - your core abstractions)
 1. `steps` - 6 edges
 2. `steps` - 4 edges
-3. `check-audit-log` - 3 edges
-4. `send-webhook` - 3 edges
-5. `env` - 3 edges
-6. `schedule` - 2 edges
-7. `jobs` - 2 edges
-8. `issues` - 2 edges
-9. `jobs` - 2 edges
-10. `name` - 1 edges
+3. `on` - 3 edges
+4. `check-audit-log` - 3 edges
+5. `send-webhook` - 3 edges
+6. `env` - 3 edges
+7. `schedule` - 2 edges
+8. `jobs` - 2 edges
+9. `on` - 2 edges
+10. `issues` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -40,11 +40,11 @@ Nodes (8): runs-on, steps, check-audit-log, id, if, name, run, uses
 
 ### Community 2 - "auto-jira.yaml"
 Cohesion: 0.25
-Nodes (7): types, jobs, send-webhook, name, runs-on, True, issues
+Nodes (7): types, jobs, send-webhook, name, on, issues, runs-on
 
 ### Community 3 - "actions_settings_slackbalert.yaml"
 Cohesion: 0.29
-Nodes (6): jobs, name, cron, True, schedule, workflow_dispatch
+Nodes (6): jobs, name, on, schedule, workflow_dispatch, cron
 
 ### Community 4 - "steps"
 Cohesion: 0.33
