@@ -1,7 +1,7 @@
-# Graph Report - GitHub_Actions  (2026-11-16)
+# Graph Report - GitHub_Actions  (2026-11-23)
 
 ## Corpus Check
-- Corpus is ~14,130 words - fits in a single context window. You may not need a graph.
+- Corpus is ~14,165 words - fits in a single context window. You may not need a graph.
 
 ## Summary
 - 44 nodes · 41 edges · 5 communities (4 shown, 1 thin omitted)
